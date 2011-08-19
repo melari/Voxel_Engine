@@ -1,0 +1,8 @@
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Voxel_Engine.exe
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Voxel_Engine.pdb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug\Voxel_Engine.exe
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug\Voxel_Engine.pdb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\effects.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\default.xnb
