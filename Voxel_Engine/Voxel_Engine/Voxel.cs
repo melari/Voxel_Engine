@@ -114,7 +114,7 @@ namespace Voxel_Engine
         }
 
         public void Draw(GraphicsDevice device)
-        {
+        {            
             device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, indices, 0, indices.Length / 3, VertexPositionColor.VertexDeclaration);
         }
     }

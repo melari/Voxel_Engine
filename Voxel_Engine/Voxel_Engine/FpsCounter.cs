@@ -7,14 +7,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Voxel_Engine
 {
-    class FpsCounter
+    static class FpsCounter
     {
-        int fps = 0;
-        int count = 0;
-        TimeSpan elapsedTime = TimeSpan.Zero;
+        public static bool ENABLED = false;
 
-        public void Update(GameTime gameTime)
+        static int fps = 0;
+        static int count = 0;
+        static TimeSpan elapsedTime = TimeSpan.Zero;
+
+        public static void Update(GameTime gameTime)
         {
+            if (!ENABLED) { return; }
+
             elapsedTime += gameTime.ElapsedGameTime;
 
             if (elapsedTime > TimeSpan.FromSeconds(1))
@@ -25,8 +29,10 @@ namespace Voxel_Engine
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, SpriteFont font)
+        public static void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
+            if (!ENABLED) { return; }
+
             count++;
             spriteBatch.DrawString(font, "FPS: " + fps.ToString(), new Vector2(33, 33), Color.Black);
             spriteBatch.DrawString(font, "FPS: " + fps.ToString(), new Vector2(32, 32), Color.White);

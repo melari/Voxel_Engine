@@ -24,7 +24,9 @@ namespace Voxel_Engine
 
         List<Voxel> voxels = new List<Voxel>();
         SpriteFont defFont;
-        FpsCounter fpsCounter = new FpsCounter();
+
+        Camera camera;
+        InputHandle input = new InputHandle();
 
         public Engine()
         {
@@ -67,60 +69,37 @@ namespace Voxel_Engine
 
             effect = Content.Load<Effect>("effects");
             defFont = Content.Load<SpriteFont>("default");
+
+            camera = new Camera(new Vector3(0f, 20.0f, 50.0f), device.Viewport.AspectRatio);
             
-            SetUpCamera();
         }                                        
-
-        Matrix viewMatrix;
-        Matrix projectionMatrix;
-        Vector3 cameraPosition = new Vector3(0f, 20.0f, 50.0f);
-        private void SetUpCamera()
-        {
-            //(From, To, Normal)//
-            viewMatrix = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.UnitY);
-
-            //(ViewAngle, resolutionRatio, MinDrawDist, MaxDrawDist)//
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, device.Viewport.AspectRatio, 1.0f, 300.0f);
-        }
-
-
-        private float angle = 0.0f;
+        
         private KeyboardState prev_ks = new KeyboardState();
         protected override void Update(GameTime gameTime)
         {
-            if (fpsCounter != null) { fpsCounter.Update(gameTime); }
-
-            KeyboardState ks = Keyboard.GetState();
-            if (ks.IsKeyDown(Keys.Escape))
+            FpsCounter.Update(gameTime);
+            input.update();
+            
+            if (input.getKey(Keys.Escape).down)
                 this.Exit();            
-
-            angle += 0.005f;
-
-            if (ks.IsKeyDown(Keys.A))
+            
+            if (input.getKey(Keys.A).down)
             {
-                cameraPosition.X -= 0.1f;
+                camera.position.X -= 0.1f;
             }
 
-            if (ks.IsKeyDown(Keys.D))
+            if (input.getKey(Keys.D).down)
             {
-                cameraPosition.X += 0.1f;
+                camera.position.X += 0.1f;
             }
-
-            prev_ks = ks;
+            
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            SetUpCamera();
+            camera.UpdateMatrices(effect);
             device.Clear(Color.Black);
-
-            effect.Parameters["xView"].SetValue(viewMatrix);
-            effect.Parameters["xProjection"].SetValue(projectionMatrix);
-
-            //Matrix worldMatrix = Matrix.CreateTranslation(-20.0f / 3.0f, -10.0f / 3.0f, 0.0f);// *Matrix.CreateRotationZ(3 * angle);
-            //effect.Parameters["xWorld"].SetValue(worldMatrix);
-            effect.Parameters["xWorld"].SetValue(Matrix.Identity);
 
             effect.CurrentTechnique = effect.Techniques["ColoredNoShading"];
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
@@ -135,9 +114,12 @@ namespace Voxel_Engine
 
 
             //2D Overlay
-            spriteBatch.Begin();
-            if (fpsCounter != null) { fpsCounter.Draw(spriteBatch, defFont); }            
-            spriteBatch.End();
+            if (FpsCounter.ENABLED)
+            {
+                spriteBatch.Begin();
+                FpsCounter.Draw(spriteBatch, defFont);
+                spriteBatch.End();
+            }
             
 
             base.Draw(gameTime);
