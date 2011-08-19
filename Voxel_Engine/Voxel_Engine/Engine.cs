@@ -73,8 +73,7 @@ namespace Voxel_Engine
             camera = new Camera(new Vector3(0f, 20.0f, 50.0f), device.Viewport.AspectRatio);
             
         }                                        
-        
-        private KeyboardState prev_ks = new KeyboardState();
+                
         protected override void Update(GameTime gameTime)
         {
             FpsCounter.Update(gameTime);
