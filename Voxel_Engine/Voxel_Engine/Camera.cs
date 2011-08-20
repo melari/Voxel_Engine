@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Voxel_Engine
 {
@@ -19,6 +20,29 @@ namespace Voxel_Engine
         {
             this.position = position;
             this.ratio = ratio;
+        }
+
+        public void Update(InputHandle input)
+        {
+            if (input.getKey(Keys.A).down)
+            {
+                position.X -= 0.5f;
+            }
+
+            if (input.getKey(Keys.D).down)
+            {
+                position.X += 0.5f;
+            }
+
+            if (input.getKey(Keys.W).down)
+            {
+                position.Z -= 0.5f;
+            }
+
+            if (input.getKey(Keys.S).down)
+            {
+                position.Z += 0.5f;
+            }
         }
 
         public void UpdateMatrices(Effect effect)

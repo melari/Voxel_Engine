@@ -15,18 +15,24 @@ namespace Voxel_Engine
     {
         public static bool CULLING = true;
         public static bool WIREFRAME = false;
+        public static bool LIGHTING = true;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         GraphicsDevice device;
 
         Effect effect;
-
-        List<Voxel> voxels = new List<Voxel>();
+        
         SpriteFont defFont;
 
         Camera camera;
         InputHandle input = new InputHandle();
+        VoxelManager voxelManager;
+
+        Texture2D red, blue;
+        Vector3 lightDirection = new Vector3(-0.455f, -0.455f, -0.091f);
+        float lightDirectionalStrength = 1.0f;
+        float lightAmbientStrength = 0.1f;
 
         public Engine()
         {
@@ -48,18 +54,7 @@ namespace Voxel_Engine
             RasterizerState rs = new RasterizerState();
             if (!CULLING) { rs.CullMode = CullMode.None; }
             if (WIREFRAME) { rs.FillMode = FillMode.WireFrame; }
-            device.RasterizerState = rs;
-
-            for (int z = -10; z < 10; z++)
-            {
-                for (int y = -10; y < 10; y++)
-                {
-                    for (int x = -10; x < 10; x++)
-                    {
-                        voxels.Add(new Voxel(new Vector3(x, y, z), Color.Red));
-                    }
-                }
-            }
+            device.RasterizerState = rs;                     
         }        
 
         protected override void LoadContent()
@@ -69,6 +64,9 @@ namespace Voxel_Engine
 
             effect = Content.Load<Effect>("effects");
             defFont = Content.Load<SpriteFont>("default");
+            red = Content.Load<Texture2D>("red");
+            blue = Content.Load<Texture2D>("blue");
+            voxelManager = new VoxelManager(red, blue);
 
             camera = new Camera(new Vector3(0f, 20.0f, 50.0f), device.Viewport.AspectRatio);
             
@@ -80,36 +78,27 @@ namespace Voxel_Engine
             input.update();
             
             if (input.getKey(Keys.Escape).down)
-                this.Exit();            
-            
-            if (input.getKey(Keys.A).down)
-            {
-                camera.position.X -= 0.1f;
-            }
+                this.Exit();
 
-            if (input.getKey(Keys.D).down)
-            {
-                camera.position.X += 0.1f;
-            }
+            camera.Update(input);
             
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            camera.UpdateMatrices(effect);
+            camera.UpdateMatrices(effect);            
+
+            effect.Parameters["xEnableLighting"].SetValue(LIGHTING);
+            //lightDirection = -camera.position;
+            //lightDirection.Normalize();
+            effect.Parameters["xLightDirection"].SetValue(lightDirection * lightDirectionalStrength);
+            effect.Parameters["xAmbient"].SetValue(lightAmbientStrength);
+
             device.Clear(Color.Black);
 
-            effect.CurrentTechnique = effect.Techniques["ColoredNoShading"];
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-
-                foreach (Voxel voxel in voxels)
-                {
-                    voxel.Draw(device);
-                }
-            }
+            effect.CurrentTechnique = effect.Techniques["Textured"];            
+            voxelManager.Draw(device, effect);
 
 
             //2D Overlay

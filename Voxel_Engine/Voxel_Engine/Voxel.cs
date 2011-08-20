@@ -9,113 +9,159 @@ namespace Voxel_Engine
 {
     class Voxel
     {
-        public static Vector3 SIZE = new Vector3(1.0f, 1.0f, 1.0f);                
+        public static Vector3 SIZE = new Vector3(1f, 1f, 1f);
 
-        private VertexPositionColor[] vertices;
-        public VertexPositionColor[] Vertices { get { return vertices; } }
+        VertexPositionNormalTexture[] front;
+        VertexPositionNormalTexture[] back;
+        VertexPositionNormalTexture[] left;
+        VertexPositionNormalTexture[] right;
+        VertexPositionNormalTexture[] top;
+        VertexPositionNormalTexture[] bottom;
+        public Vector3 position;                
+        private int[] indices = new int[]{ 2, 1, 0, 3, 2, 0 };
+        private Texture2D texture;
+        public Vector3 velocity;
 
-        public Vector3 position;
-        public Color color;
-        private Color darkColor;
-        private int[] indices;
+        VoxelManager manager;
 
-        public Voxel(Vector3 position, Color color)
+        public Voxel(VoxelManager manager, Vector3 position, Texture2D texture)
         {
+            this.manager = manager;
             this.position = position;
-            this.color = color;
-            this.darkColor = Color.Lerp(color, Color.Black, 0.5f);
-
-            SetUpIndices();
-            SetUpVertices();
+            this.texture = texture;
+            
+            SetUpVertices();            
         }
 
-        private void SetUpIndices()
+        public bool IsMoving()
         {
-            indices = new int[36];
-
-            //**FRONT**//
-            indices[0] = 2;
-            indices[1] = 1;
-            indices[2] = 0;
-            indices[3] = 3;
-            indices[4] = 2;
-            indices[5] = 0;
-
-            //**RIGHT**//
-            indices[6] = 1;
-            indices[7] = 2;
-            indices[8] = 4;
-            indices[9] = 4;
-            indices[10] = 5;
-            indices[11] = 1;
-
-            //**LEFT**//
-            indices[12] = 6;
-            indices[13] = 3;
-            indices[14] = 0;
-            indices[15] = 0;
-            indices[16] = 7;
-            indices[17] = 6;
-
-            //**BOTTOM**//
-            indices[18] = 0;
-            indices[19] = 1;
-            indices[20] = 7;
-            indices[21] = 1;
-            indices[22] = 5;
-            indices[23] = 7;
-
-            //**TOP**//
-            indices[24] = 2;
-            indices[25] = 3;
-            indices[26] = 6;
-            indices[27] = 6;
-            indices[28] = 4;
-            indices[29] = 2;
-
-            //**BACK**//
-            indices[30] = 7;
-            indices[31] = 4;
-            indices[32] = 6;
-            indices[33] = 7;
-            indices[34] = 5;
-            indices[35] = 4;
+            return velocity != Vector3.Zero;
         }
+
+        public bool IsAligned()
+        {
+            return position.X % 1 == 0 && position.Y % 1 == 0 && position.Z % 1 == 0;
+        }        
           
         private void SetUpVertices()
-        {
-            vertices = new VertexPositionColor[8];            
+        {            
+            front = new VertexPositionNormalTexture[4];
+            back = new VertexPositionNormalTexture[4];
+            top = new VertexPositionNormalTexture[4];
+            bottom = new VertexPositionNormalTexture[4];
+            left = new VertexPositionNormalTexture[4];
+            right = new VertexPositionNormalTexture[4];
 
             Vector3 xSize = new Vector3(SIZE.X, 0, 0);
             Vector3 ySize = new Vector3(0, SIZE.Y, 0);
             Vector3 zSize = new Vector3(0, 0, SIZE.Z);
 
             //**Front**//
-            vertices[0].Position = position;
-            vertices[0].Color = color;
-            vertices[1].Position = position + xSize;
-            vertices[1].Color = color;
-            vertices[2].Position = position + xSize + ySize;
-            vertices[2].Color = darkColor;
-            vertices[3].Position = position + ySize;
-            vertices[3].Color = darkColor;
+            front[0].Position = position;
+            front[0].TextureCoordinate = Vector2.Zero;
+            front[0].Normal = Vector3.UnitZ;
+            front[1].Position = position + xSize;
+            front[1].TextureCoordinate = Vector2.Zero;
+            front[1].Normal = Vector3.UnitZ;
+            front[2].Position = position + xSize + ySize;
+            front[2].TextureCoordinate = Vector2.Zero;
+            front[2].Normal = Vector3.UnitZ;
+            front[3].Position = position + ySize;
+            front[3].TextureCoordinate = Vector2.Zero;
+            front[3].Normal = Vector3.UnitZ;
 
             //**RIGHT**//            
-            vertices[4].Position = position + xSize + ySize - zSize;
-            vertices[4].Color = darkColor;
-            vertices[5].Position = position + xSize - zSize;
-            vertices[5].Color = color;
+            right[0].Position = position + xSize;
+            right[0].TextureCoordinate = Vector2.Zero;
+            right[0].Normal = Vector3.UnitX;
+            right[1].Position = position + xSize - zSize;
+            right[1].TextureCoordinate = Vector2.Zero;
+            right[1].Normal = Vector3.UnitX;
+            right[2].Position = position + xSize + ySize - zSize;
+            right[2].TextureCoordinate = Vector2.Zero;
+            right[2].Normal = Vector3.UnitX;
+            right[3].Position = position + xSize + ySize;
+            right[3].TextureCoordinate = Vector2.Zero;
+            right[3].Normal = Vector3.UnitX;
 
             //**LEFT**//
-            vertices[6].Position = position + ySize - zSize;
-            vertices[6].Color = darkColor;
-            vertices[7].Position = position - zSize;
-            vertices[7].Color = color;
+            left[0].Position = position - zSize;
+            left[0].TextureCoordinate = Vector2.Zero;
+            left[0].Normal = -Vector3.UnitX;
+            left[1].Position = position;
+            left[1].TextureCoordinate = Vector2.Zero;
+            left[1].Normal = -Vector3.UnitX;
+            left[2].Position = position + ySize;
+            left[2].TextureCoordinate = Vector2.Zero;
+            left[2].Normal = -Vector3.UnitX;
+            left[3].Position = position + ySize - zSize;
+            left[3].TextureCoordinate = Vector2.Zero;
+            left[3].Normal = -Vector3.UnitX;
+
+            //**TOP**//
+            top[0].Position = position + ySize;
+            top[0].TextureCoordinate = Vector2.Zero;
+            top[0].Normal = Vector3.UnitY;
+            top[1].Position = position + ySize + xSize;
+            top[1].TextureCoordinate = Vector2.Zero;
+            top[1].Normal = Vector3.UnitY;
+            top[2].Position = position + xSize + ySize - zSize;
+            top[2].TextureCoordinate = Vector2.Zero;
+            top[2].Normal = Vector3.UnitY;
+            top[3].Position = position + ySize - zSize;
+            top[3].TextureCoordinate = Vector2.Zero;
+            top[3].Normal = Vector3.UnitY;
+
+            //**BOTTOM**//
+                bottom[0].Position = position + xSize;
+            bottom[0].TextureCoordinate = Vector2.Zero;
+            bottom[0].Normal = -Vector3.UnitY;
+                bottom[1].Position = position;
+            bottom[1].TextureCoordinate = Vector2.Zero;
+            bottom[1].Normal = -Vector3.UnitY;
+                bottom[2].Position = position - zSize;
+            bottom[2].TextureCoordinate = Vector2.Zero;
+            bottom[2].Normal = -Vector3.UnitY;
+                bottom[3].Position = position + xSize - zSize;
+            bottom[3].TextureCoordinate = Vector2.Zero;
+            bottom[3].Normal = -Vector3.UnitY;
+
+            //**BACK**//
+            back[0].Position = position + xSize - zSize;
+            back[0].TextureCoordinate = Vector2.Zero;
+            back[0].Normal = -Vector3.UnitZ;
+            back[1].Position = position - zSize;
+            back[1].TextureCoordinate = Vector2.Zero;
+            back[1].Normal = -Vector3.UnitZ;
+            back[2].Position = position + ySize - zSize;
+            back[2].TextureCoordinate = Vector2.Zero;
+            back[2].Normal = -Vector3.UnitZ;
+            back[3].Position = position + xSize + ySize - zSize;
+            back[3].TextureCoordinate = Vector2.Zero;
+            back[3].Normal = -Vector3.UnitZ;
         }
 
-        public void Draw(GraphicsDevice device)
-        {            
-            device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, vertices, 0, vertices.Length, indices, 0, indices.Length / 3, VertexPositionColor.VertexDeclaration);
+        public void Draw(GraphicsDevice device, Effect effect)
+        {
+            effect.Parameters["xTexture"].SetValue(texture);
+            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+            {
+                pass.Apply();
+
+                if (manager.GetVoxelByPosition(position + Vector3.UnitZ) == null)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, front, 0, front.Length, indices, 0, indices.Length / 3);
+                if (manager.GetVoxelByPosition(position + Vector3.UnitX) == null)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, right, 0, front.Length, indices, 0, indices.Length / 3);
+                if (manager.GetVoxelByPosition(position - Vector3.UnitX) == null)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, left, 0, front.Length, indices, 0, indices.Length / 3);
+                if (manager.GetVoxelByPosition(position + Vector3.UnitY) == null)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, top, 0, front.Length, indices, 0, indices.Length / 3);
+                //if (manager.GetVoxelByPosition(position - Vector3.UnitY) == null && position.Y != 0)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, bottom, 0, front.Length, indices, 0, indices.Length / 3);
+                if (manager.GetVoxelByPosition(position - Vector3.UnitZ) == null)
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, back, 0, front.Length, indices, 0, indices.Length / 3);
+            }
+            
         }
     }
 }

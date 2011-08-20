@@ -9,7 +9,7 @@ namespace Voxel_Engine
 {
     class Key
     {
-        bool _down; public bool down { get { return _down; } }
+        bool _down; public bool down { get { return _down; } }        
         bool _released; public bool released { get { return _released; } }
         bool _pressed; public bool pressed { get { return _pressed; } }
 
