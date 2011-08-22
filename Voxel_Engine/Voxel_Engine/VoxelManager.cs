@@ -9,26 +9,25 @@ namespace Voxel_Engine
 {
     class VoxelManager
     {        
-        public static int MAX_X = 100;
-        public static int MAX_Y = 100;
-        public static int MAX_Z = 100;
+        public static int MAX_X = 60;
+        public static int MAX_Y = 10;
+        public static int MAX_Z = 60;
 
         BufferedList<Voxel> voxels = new BufferedList<Voxel>();
         Voxel[, ,] map = new Voxel[MAX_X, MAX_Y, MAX_Z];
 
-        public VoxelManager(Texture2D red, Texture2D blue)
-        {
-            for (int z = 0; z < 30; z++)
+        public VoxelManager()
+        {               
+            for (int z = 0; z < 60; z++)
             {
-                for (int y = 0; y < 10; y++)
+                for (int y = 0; y < 5; y++)
                 {
-                    for (int x = 0; x < 30; x++)
-                    {
-                        Texture2D texture = MathExtra.rand.Next(2) == 0 ? red : blue;
-                        Add(new Voxel(this, new Vector3(x, y, z), texture));
+                    for (int x = 0; x < 60; x++)
+                    {                        
+                        Add(new Voxel(this, new Vector3(x, y, z), TextureManager.getTexture("grass")));
                     }
                 }
-            }
+            }            
         }
 
         public void Add(Voxel voxel)
@@ -62,16 +61,42 @@ namespace Voxel_Engine
             return map[(int)position.X, (int)position.Y, (int)position.Z];                        
         }
 
+        public bool IsOpaqueAt(Vector3 position)
+        {
+            Voxel v = GetVoxelByPosition(position);
+            if (v == null)
+                return false;
+            return !v.alpha;
+        }
+
         private void MapSetByVector(Vector3 position, Voxel value)
         {
             map[(int)position.X, (int)position.Y, (int)position.Z] = value;
         }
 
-        public void Draw(GraphicsDevice device, Effect effect)
+        public int FindTopSpace(int x, int z)
+        {
+            for (int y = 0; y < MAX_Y; y++)
+            {
+                if (GetVoxelByPosition(new Vector3(x, y, z)) == null) 
+                { 
+                    return y; 
+                }
+            }
+            return -1; //no space.
+        }
+
+        public void Clear()
+        {
+            voxels.Clear();
+            map = new Voxel[MAX_X, MAX_Y, MAX_Z];
+        }
+
+        public void Draw(GraphicsDevice device, Effect effect, BufferedList<Light> lights)
         {
             foreach (Voxel voxel in voxels)
             {
-                voxel.Draw(device, effect);
+                voxel.Draw(device, effect, lights);
             }
         }
     }

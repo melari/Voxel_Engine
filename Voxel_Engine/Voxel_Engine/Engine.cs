@@ -17,6 +17,10 @@ namespace Voxel_Engine
         public static bool WIREFRAME = false;
         public static bool LIGHTING = true;
 
+        public static int RES_WIDTH = 1600;
+        public static int RES_HEIGHT = 900;
+        public static bool FULLSCREEN = false;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         GraphicsDevice device;
@@ -27,12 +31,13 @@ namespace Voxel_Engine
 
         Camera camera;
         InputHandle input = new InputHandle();
-        VoxelManager voxelManager;
 
-        Texture2D red, blue;
-        Vector3 lightDirection = new Vector3(-0.455f, -0.455f, -0.091f);
-        float lightDirectionalStrength = 1.0f;
-        float lightAmbientStrength = 0.1f;
+        VoxelManager voxelManager;
+        BufferedList<Light> lights = new BufferedList<Light>();
+        Editor editor;
+        
+        Vector3 lightDirection = new Vector3(-0.455f, -0.455f, -0.091f);        
+        float lightAmbientStrength = 0.5f;
 
         public Engine()
         {
@@ -40,36 +45,51 @@ namespace Voxel_Engine
             Content.RootDirectory = "Content";
         }
 
+        SamplerState samplerState;
         protected override void Initialize()
         {
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
-            graphics.IsFullScreen = true;
-            graphics.ApplyChanges();
+            InitRes();
             Window.Title = "Panacea Voxel Engine v0.1_0";
-            graphics.PreferMultiSampling = true;           
+            graphics.PreferMultiSampling = false;           
             base.Initialize();
-
+                        
 
             RasterizerState rs = new RasterizerState();
             if (!CULLING) { rs.CullMode = CullMode.None; }
-            if (WIREFRAME) { rs.FillMode = FillMode.WireFrame; }
-            device.RasterizerState = rs;                     
-        }        
+            if (WIREFRAME) { rs.FillMode = FillMode.WireFrame; }            
+            device.RasterizerState = rs;
+
+            device.BlendState = BlendState.AlphaBlend;
+
+            samplerState = new SamplerState();
+            samplerState.Filter = TextureFilter.Point;
+            device.SamplerStates[0] = samplerState;
+        }
+
+        public void InitRes()
+        {            
+            graphics.PreferredBackBufferWidth = RES_WIDTH;
+            graphics.PreferredBackBufferHeight = RES_HEIGHT;
+            graphics.IsFullScreen = FULLSCREEN;
+            graphics.ApplyChanges();
+        }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             device = graphics.GraphicsDevice;
+            TextureManager.Init(Content);
 
-            effect = Content.Load<Effect>("effects");
-            defFont = Content.Load<SpriteFont>("default");
-            red = Content.Load<Texture2D>("red");
-            blue = Content.Load<Texture2D>("blue");
-            voxelManager = new VoxelManager(red, blue);
-
-            camera = new Camera(new Vector3(0f, 20.0f, 50.0f), device.Viewport.AspectRatio);
+            effect = Content.Load<Effect>("effects");            
+            effect.Parameters["xEnableLighting"].SetValue(LIGHTING);            
+            effect.Parameters["xAmbient"].SetValue(lightAmbientStrength);
             
+            effect.CurrentTechnique = effect.Techniques["Textured"];
+
+            defFont = Content.Load<SpriteFont>("default");            
+            voxelManager = new VoxelManager();
+            
+            camera = new Camera(75, MathHelper.ToRadians(30), new Vector3(VoxelManager.MAX_X / 2, 0, VoxelManager.MAX_Z / 2 + 3), device.Viewport.AspectRatio);
         }                                        
                 
         protected override void Update(GameTime gameTime)
@@ -81,24 +101,20 @@ namespace Voxel_Engine
                 this.Exit();
 
             camera.Update(input);
+            if (editor != null) { editor.Update(input, lights); }
+            else if (input.getKey(Keys.OemTilde).released) { editor = new Editor(voxelManager, lights); }
             
             base.Update(gameTime);
         }
-
+        
         protected override void Draw(GameTime gameTime)
         {
-            camera.UpdateMatrices(effect);            
-
-            effect.Parameters["xEnableLighting"].SetValue(LIGHTING);
-            //lightDirection = -camera.position;
-            //lightDirection.Normalize();
-            effect.Parameters["xLightDirection"].SetValue(lightDirection * lightDirectionalStrength);
-            effect.Parameters["xAmbient"].SetValue(lightAmbientStrength);
-
-            device.Clear(Color.Black);
-
-            effect.CurrentTechnique = effect.Techniques["Textured"];            
-            voxelManager.Draw(device, effect);
+            camera.UpdateMatrices(effect);
+            device.Clear(Color.Black);                                    
+            device.BlendState = BlendState.NonPremultiplied;
+                        
+            voxelManager.Draw(device, effect, lights);
+            if (editor != null) { editor.Draw(device, effect, lights); }
 
 
             //2D Overlay

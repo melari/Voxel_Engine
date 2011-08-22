@@ -1,4 +1,5 @@
 Content\effects.xnb
 Content\default.xnb
-Content\red.xnb
-Content\blue.xnb
+Content\grass1.xnb
+Content\trunk.xnb
+Content\leaves.xnb

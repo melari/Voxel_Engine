@@ -56,15 +56,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="red.bmp">
-      <Name>red</Name>
+    <Compile Include="grass1.png">
+      <Name>grass1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="blue.bmp">
-      <Name>blue</Name>
+    <Compile Include="leaves.png">
+      <Name>leaves</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="trunk.png">
+      <Name>trunk</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

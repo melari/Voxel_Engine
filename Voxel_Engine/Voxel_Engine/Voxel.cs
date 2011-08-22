@@ -6,7 +6,29 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 
 namespace Voxel_Engine
-{
+{    
+    struct VoxelVertex
+    {
+        public Vector3 Position;        
+        public Vector3 Normal;
+        public Vector2 TextureCoordinate;
+
+        public VoxelVertex(Vector3 position, Vector3 normal, Vector2 textureCoordinate)
+        {
+            Position = position;
+            Normal = normal;
+            TextureCoordinate = textureCoordinate;
+        }
+
+        public readonly static VertexDeclaration VertexDeclaration = new VertexDeclaration
+              (
+                  new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                  new VertexElement(sizeof(float) * 3, VertexElementFormat.Vector3, VertexElementUsage.Normal, 0),
+                  new VertexElement(sizeof(float) * 3, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0)
+              );
+        
+     }   
+
     class Voxel
     {
         public static Vector3 SIZE = new Vector3(1f, 1f, 1f);
@@ -17,18 +39,20 @@ namespace Voxel_Engine
         VertexPositionNormalTexture[] right;
         VertexPositionNormalTexture[] top;
         VertexPositionNormalTexture[] bottom;
-        public Vector3 position;                
+        public Vector3 position;               
         private int[] indices = new int[]{ 2, 1, 0, 3, 2, 0 };
-        private Texture2D texture;
+        public Texture2D texture;
         public Vector3 velocity;
+        public bool alpha;
 
         VoxelManager manager;
 
-        public Voxel(VoxelManager manager, Vector3 position, Texture2D texture)
+        public Voxel(VoxelManager manager, Vector3 position, Texture2D texture, bool alpha = false)
         {
             this.manager = manager;
             this.position = position;
             this.texture = texture;
+            this.alpha = alpha;
             
             SetUpVertices();            
         }
@@ -41,10 +65,17 @@ namespace Voxel_Engine
         public bool IsAligned()
         {
             return position.X % 1 == 0 && position.Y % 1 == 0 && position.Z % 1 == 0;
-        }        
-          
+        }
+
+        private void SetUpTextureCoordinates(VertexPositionNormalTexture[] vertices)
+        {
+            vertices[0].TextureCoordinate = new Vector2(0, 1);
+            vertices[1].TextureCoordinate = new Vector2(1, 1);
+            vertices[2].TextureCoordinate = new Vector2(1, 0);
+            vertices[3].TextureCoordinate = new Vector2(0, 0);
+        }
         private void SetUpVertices()
-        {            
+        {
             front = new VertexPositionNormalTexture[4];
             back = new VertexPositionNormalTexture[4];
             top = new VertexPositionNormalTexture[4];
@@ -52,116 +83,167 @@ namespace Voxel_Engine
             left = new VertexPositionNormalTexture[4];
             right = new VertexPositionNormalTexture[4];
 
+            SetUpTextureCoordinates(front);
+            SetUpTextureCoordinates(bottom);
+            SetUpTextureCoordinates(right);
+            SetUpTextureCoordinates(left);
+            SetUpTextureCoordinates(back);
+            SetUpTextureCoordinates(top);
+
+            for (int i = 0; i < 4; i++)
+            {
+                front[i].Normal = Vector3.UnitZ;                           
+            }           
+                       
+            for (int i = 0; i < 4; i++)
+            {
+                right[i].Normal = Vector3.UnitX;
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                left[i].Normal = -Vector3.UnitX;
+            }            
+                       
+            for (int i = 0; i < 4; i++)
+            {
+                top[i].Normal = Vector3.UnitY;                
+            }
+                        
+            for (int i = 0; i < 4; i++)
+            {
+                bottom[i].Normal = -Vector3.UnitY;                
+            }           
+                       
+            for (int i = 0; i < 4; i++)
+            {
+                back[i].Normal = -Vector3.UnitZ;                
+            }
+
+            ForceVerticeUpdate();
+        }
+
+        public void ForceVerticeUpdate()
+        {
             Vector3 xSize = new Vector3(SIZE.X, 0, 0);
             Vector3 ySize = new Vector3(0, SIZE.Y, 0);
             Vector3 zSize = new Vector3(0, 0, SIZE.Z);
 
-            //**Front**//
             front[0].Position = position;
-            front[0].TextureCoordinate = Vector2.Zero;
-            front[0].Normal = Vector3.UnitZ;
             front[1].Position = position + xSize;
-            front[1].TextureCoordinate = Vector2.Zero;
-            front[1].Normal = Vector3.UnitZ;
             front[2].Position = position + xSize + ySize;
-            front[2].TextureCoordinate = Vector2.Zero;
-            front[2].Normal = Vector3.UnitZ;
             front[3].Position = position + ySize;
-            front[3].TextureCoordinate = Vector2.Zero;
-            front[3].Normal = Vector3.UnitZ;
 
-            //**RIGHT**//            
-            right[0].Position = position + xSize;
-            right[0].TextureCoordinate = Vector2.Zero;
-            right[0].Normal = Vector3.UnitX;
-            right[1].Position = position + xSize - zSize;
-            right[1].TextureCoordinate = Vector2.Zero;
-            right[1].Normal = Vector3.UnitX;
-            right[2].Position = position + xSize + ySize - zSize;
-            right[2].TextureCoordinate = Vector2.Zero;
-            right[2].Normal = Vector3.UnitX;
-            right[3].Position = position + xSize + ySize;
-            right[3].TextureCoordinate = Vector2.Zero;
-            right[3].Normal = Vector3.UnitX;
-
-            //**LEFT**//
-            left[0].Position = position - zSize;
-            left[0].TextureCoordinate = Vector2.Zero;
-            left[0].Normal = -Vector3.UnitX;
-            left[1].Position = position;
-            left[1].TextureCoordinate = Vector2.Zero;
-            left[1].Normal = -Vector3.UnitX;
-            left[2].Position = position + ySize;
-            left[2].TextureCoordinate = Vector2.Zero;
-            left[2].Normal = -Vector3.UnitX;
-            left[3].Position = position + ySize - zSize;
-            left[3].TextureCoordinate = Vector2.Zero;
-            left[3].Normal = -Vector3.UnitX;
-
-            //**TOP**//
-            top[0].Position = position + ySize;
-            top[0].TextureCoordinate = Vector2.Zero;
-            top[0].Normal = Vector3.UnitY;
-            top[1].Position = position + ySize + xSize;
-            top[1].TextureCoordinate = Vector2.Zero;
-            top[1].Normal = Vector3.UnitY;
-            top[2].Position = position + xSize + ySize - zSize;
-            top[2].TextureCoordinate = Vector2.Zero;
-            top[2].Normal = Vector3.UnitY;
-            top[3].Position = position + ySize - zSize;
-            top[3].TextureCoordinate = Vector2.Zero;
-            top[3].Normal = Vector3.UnitY;
-
-            //**BOTTOM**//
-                bottom[0].Position = position + xSize;
-            bottom[0].TextureCoordinate = Vector2.Zero;
-            bottom[0].Normal = -Vector3.UnitY;
-                bottom[1].Position = position;
-            bottom[1].TextureCoordinate = Vector2.Zero;
-            bottom[1].Normal = -Vector3.UnitY;
-                bottom[2].Position = position - zSize;
-            bottom[2].TextureCoordinate = Vector2.Zero;
-            bottom[2].Normal = -Vector3.UnitY;
-                bottom[3].Position = position + xSize - zSize;
-            bottom[3].TextureCoordinate = Vector2.Zero;
-            bottom[3].Normal = -Vector3.UnitY;
-
-            //**BACK**//
             back[0].Position = position + xSize - zSize;
-            back[0].TextureCoordinate = Vector2.Zero;
-            back[0].Normal = -Vector3.UnitZ;
             back[1].Position = position - zSize;
-            back[1].TextureCoordinate = Vector2.Zero;
-            back[1].Normal = -Vector3.UnitZ;
             back[2].Position = position + ySize - zSize;
-            back[2].TextureCoordinate = Vector2.Zero;
-            back[2].Normal = -Vector3.UnitZ;
             back[3].Position = position + xSize + ySize - zSize;
-            back[3].TextureCoordinate = Vector2.Zero;
-            back[3].Normal = -Vector3.UnitZ;
+
+            bottom[0].Position = position + xSize;
+            bottom[1].Position = position;
+            bottom[2].Position = position - zSize;
+            bottom[3].Position = position + xSize - zSize;
+
+            top[0].Position = position + ySize;
+            top[1].Position = position + ySize + xSize;
+            top[2].Position = position + xSize + ySize - zSize;
+            top[3].Position = position + ySize - zSize;
+
+            left[0].Position = position - zSize;
+            left[1].Position = position;
+            left[2].Position = position + ySize;
+            left[3].Position = position + ySize - zSize;
+
+            right[0].Position = position + xSize;
+            right[1].Position = position + xSize - zSize;
+            right[2].Position = position + xSize + ySize - zSize;
+            right[3].Position = position + xSize + ySize; 
         }
 
-        public void Draw(GraphicsDevice device, Effect effect)
+        private float CalculateLighting(VertexPositionNormalTexture[] vertices, BufferedList<Light> lights)
         {
-            effect.Parameters["xTexture"].SetValue(texture);
-            foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
+            float strength = 0;
+            foreach (Light light in lights)
+            {                
+                Vector3 lightRay = vertices[0].Position - light.position;
+                float length = lightRay.Length();
+                lightRay.Normalize();
+                float dot = Vector3.Dot(vertices[0].Normal, -lightRay);
+                float distAdjust = Math.Max(0, (light.distance - length) / light.distance);
+                strength += Math.Max(0, dot * distAdjust * light.brightness);
+            }
 
-                if (manager.GetVoxelByPosition(position + Vector3.UnitZ) == null)
+            return strength;
+        }
+
+        public void Draw(GraphicsDevice device, Effect effect, BufferedList<Light> lights)
+        {
+            if (velocity != Vector3.Zero)
+            {
+                ForceVerticeUpdate();
+            }
+
+            effect.Parameters["xTexture"].SetValue(texture);
+            
+            if (!manager.IsOpaqueAt(position + Vector3.UnitZ))
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(front, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
                     device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, front, 0, front.Length, indices, 0, indices.Length / 3);
-                if (manager.GetVoxelByPosition(position + Vector3.UnitX) == null)
-                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, right, 0, front.Length, indices, 0, indices.Length / 3);
-                if (manager.GetVoxelByPosition(position - Vector3.UnitX) == null)
-                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, left, 0, front.Length, indices, 0, indices.Length / 3);
-                if (manager.GetVoxelByPosition(position + Vector3.UnitY) == null)
-                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, top, 0, front.Length, indices, 0, indices.Length / 3);
-                //if (manager.GetVoxelByPosition(position - Vector3.UnitY) == null && position.Y != 0)
-                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, bottom, 0, front.Length, indices, 0, indices.Length / 3);
-                if (manager.GetVoxelByPosition(position - Vector3.UnitZ) == null)
-                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, back, 0, front.Length, indices, 0, indices.Length / 3);
+                }
             }
             
+            if (!manager.IsOpaqueAt(position + Vector3.UnitX))
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(right, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, right, 0, right.Length, indices, 0, indices.Length / 3);
+                }
+            }
+            
+            if (!manager.IsOpaqueAt(position - Vector3.UnitX))
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(left, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, left, 0, left.Length, indices, 0, indices.Length / 3);
+                }
+            }
+            
+            if (!manager.IsOpaqueAt(position + Vector3.UnitY))
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(top, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, top, 0, top.Length, indices, 0, indices.Length / 3);
+                }
+            }
+            
+            if (!manager.IsOpaqueAt(position - Vector3.UnitY) && position.Y != 0)
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(bottom, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, bottom, 0, bottom.Length, indices, 0, indices.Length / 3);
+                }
+            }
+            
+            if (!manager.IsOpaqueAt(position - Vector3.UnitZ))
+            {
+                effect.Parameters["xLightDirection"].SetValue(CalculateLighting(back, lights));
+                foreach (EffectPass pass in effect.CurrentTechnique.Passes)
+                {
+                    pass.Apply();
+                    device.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, back, 0, back.Length, indices, 0, indices.Length / 3);
+                }
+            }
         }
     }
 }

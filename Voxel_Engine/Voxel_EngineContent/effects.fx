@@ -26,7 +26,7 @@ float xPointSpriteSize;
 //------- Texture Samplers --------
 
 Texture xTexture;
-sampler TextureSampler = sampler_state { texture = <xTexture>; magfilter = LINEAR; minfilter = LINEAR; mipfilter=LINEAR; AddressU = mirror; AddressV = mirror;};
+sampler TextureSampler = sampler_state { texture = <xTexture>; magfilter = POINT; minfilter = POINT; mipfilter = POINT; AddressU = mirror; AddressV = mirror;};
 
 //------- Technique: Pretransformed --------
 
@@ -143,7 +143,10 @@ VertexToPixel TexturedVS( float4 inPos : POSITION, float3 inNormal: NORMAL, floa
 	float3 Normal = normalize(mul(normalize(inNormal), xWorld));	
 	Output.LightingFactor = 1;
 	if (xEnableLighting)
-		Output.LightingFactor = dot(Normal, -xLightDirection);
+	{
+		//Output.LightingFactor = dot(Normal, -xLightDirection);	
+		Output.LightingFactor = xLightDirection;
+	}
     
 	return Output;    
 }
@@ -162,8 +165,8 @@ technique Textured
 {
 	pass Pass0
 	{   
-		VertexShader = compile vs_2_0 TexturedVS();
-		PixelShader  = compile ps_2_0 TexturedPS();
+		VertexShader = compile vs_3_0 TexturedVS();
+		PixelShader  = compile ps_3_0 TexturedPS();
 	}
 }
 

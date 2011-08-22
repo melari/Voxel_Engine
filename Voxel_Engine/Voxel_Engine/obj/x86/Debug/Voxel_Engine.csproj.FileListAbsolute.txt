@@ -6,5 +6,6 @@ C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\obj\x86\Debug\Voxel_Engine.pdb
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\effects.xnb
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\default.xnb
-C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\red.xnb
-C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\blue.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\grass1.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\trunk.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\leaves.xnb

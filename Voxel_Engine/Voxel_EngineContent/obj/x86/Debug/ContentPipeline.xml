@@ -8,7 +8,7 @@
       <Processor>EffectProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\effects.xnb</Output>
-      <Time>2011-08-19T10:12:00.8837136-04:00</Time>
+      <Time>2011-08-22T12:37:47.3258214-04:00</Time>
     </Item>
     <Item>
       <Source>default.spritefont</Source>
@@ -20,22 +20,31 @@
       <Time>2011-08-19T12:45:45.0483057-04:00</Time>
     </Item>
     <Item>
-      <Source>red.bmp</Source>
-      <Name>red</Name>
+      <Source>grass1.png</Source>
+      <Name>grass1</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\red.xnb</Output>
-      <Time>2011-08-20T07:55:12.818052-04:00</Time>
+      <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\grass1.xnb</Output>
+      <Time>2011-08-22T11:41:55.7314437-04:00</Time>
     </Item>
     <Item>
-      <Source>blue.bmp</Source>
-      <Name>blue</Name>
+      <Source>trunk.png</Source>
+      <Name>trunk</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\blue.xnb</Output>
-      <Time>2011-08-20T08:23:57.6357429-04:00</Time>
+      <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\trunk.xnb</Output>
+      <Time>2011-08-22T11:41:55.7314437-04:00</Time>
+    </Item>
+    <Item>
+      <Source>leaves.png</Source>
+      <Name>leaves</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\leaves.xnb</Output>
+      <Time>2011-08-22T11:41:55.7314437-04:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
