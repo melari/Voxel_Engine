@@ -16,19 +16,19 @@ namespace Voxel_Engine
         Light light;        
         bool stack = true;
 
-        string[] textures = new string[] { "leaves", "trunk", "grass" };
+        string[] textures = new string[] { "leaves", "trunk", "grass", "cobblestone", "torch" };
         int texture_index = 0;
         string texture { get { return textures[texture_index]; } }
 
-        public Editor(VoxelManager manager, BufferedList<Light> lights)
+        public Editor(VoxelManager manager)
         {
             this.manager = manager;
-            toCreate = new Voxel(manager, position, TextureManager.getTexture(texture), TextureManager.containsAlpha(texture));
-            light = new Light(position, 10);
-            lights.Add(light);
+            toCreate = new Voxel(manager, position, TextureManager.getTexture(texture), TextureManager.containsAlpha(texture), TextureManager.isCube(texture));
+            light = new Light(position, 10);        
+            manager.lights.Add(light);
         }
 
-        public void Update(InputHandle input, BufferedList<Light> lights)
+        public void Update(InputHandle input)
         {
             if (input.getKey(Keys.RightControl).pressed) { stack = !stack; }
 
@@ -54,7 +54,7 @@ namespace Voxel_Engine
 
             if (input.getKey(Keys.RightShift).pressed)
             {
-                lights.Add(new Light(position, 10));
+                manager.lights.Add(new Light(position, 10));
             }
 
 
@@ -62,7 +62,7 @@ namespace Voxel_Engine
             {
                 manager.Add(toCreate);
                 bool test = TextureManager.containsAlpha(texture);
-                toCreate = new Voxel(manager, position, TextureManager.getTexture(texture), TextureManager.containsAlpha(texture));
+                toCreate = new Voxel(manager, position, TextureManager.getTexture(texture), TextureManager.containsAlpha(texture), TextureManager.isCube(texture), texture == "torch");
             }
 
             if (input.getKey(Keys.P).pressed) //clear map
@@ -77,6 +77,7 @@ namespace Voxel_Engine
                 if (texture_index >= textures.Count()) { texture_index = 0; }
                 toCreate.texture = TextureManager.getTexture(texture);
                 toCreate.alpha = TextureManager.containsAlpha(texture);
+                toCreate.cube = TextureManager.isCube(texture);
             }
             if (input.getKey(Keys.OemComma).pressed)
             {
@@ -84,12 +85,13 @@ namespace Voxel_Engine
                 if (texture_index < 0) { texture_index = textures.Count()-1; }
                 toCreate.texture = TextureManager.getTexture(texture);
                 toCreate.alpha = TextureManager.containsAlpha(texture);
+                toCreate.cube = TextureManager.isCube(texture);
             }
         }        
 
-        public void Draw(GraphicsDevice device, Effect effect, BufferedList<Light> lights)
+        public void Draw(GraphicsDevice device, Effect effect)
         {
-            toCreate.Draw(device, effect, lights);
+            toCreate.Draw(device, effect);
         }
     }
 }

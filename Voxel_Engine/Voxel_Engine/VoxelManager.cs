@@ -9,25 +9,29 @@ namespace Voxel_Engine
 {
     class VoxelManager
     {        
-        public static int MAX_X = 60;
-        public static int MAX_Y = 10;
-        public static int MAX_Z = 60;
+        public static int MAX_X = 64;
+        public static int MAX_Y = 32;
+        public static int MAX_Z = 64;
 
         BufferedList<Voxel> voxels = new BufferedList<Voxel>();
         Voxel[, ,] map = new Voxel[MAX_X, MAX_Y, MAX_Z];
 
+        public BufferedList<Light> lights = new BufferedList<Light>();
+
         public VoxelManager()
         {               
-            for (int z = 0; z < 60; z++)
+            for (int z = 0; z < 32; z++)
             {
-                for (int y = 0; y < 5; y++)
+                for (int y = 0; y < 16; y++)
                 {
-                    for (int x = 0; x < 60; x++)
+                    for (int x = 0; x < 32; x++)
                     {                        
                         Add(new Voxel(this, new Vector3(x, y, z), TextureManager.getTexture("grass")));
                     }
                 }
-            }            
+            }
+            for (int i = 0; i < 20; i++)
+                lights.Add(new Light(new Vector3(0, 33, 0), 30));
         }
 
         public void Add(Voxel voxel)
@@ -48,6 +52,7 @@ namespace Voxel_Engine
 
         public void Remove(Voxel voxel)
         {
+            voxel.Destroy();
             MapSetByVector(voxel.position, null);
             voxels.Remove(voxel);
         }
@@ -92,11 +97,30 @@ namespace Voxel_Engine
             map = new Voxel[MAX_X, MAX_Y, MAX_Z];
         }
 
-        public void Draw(GraphicsDevice device, Effect effect, BufferedList<Light> lights)
+        public void SendLightsToShader(Effect effect)
+        {
+            Vector3[] _lightPosition = new Vector3[lights.Count];
+            float[] _lightBrightness = new float[lights.Count];
+            float[] _lightDistance = new float[lights.Count];
+            
+            for (int i = 0; i < lights.Count; i++)
+            {
+                _lightPosition[i] = lights[i].position;
+                _lightBrightness[i] = lights[i].brightness;
+                _lightDistance[i] = lights[i].distance;
+            }
+
+            effect.Parameters["xLightCount"].SetValue(lights.Count);
+            effect.Parameters["xLightPosition"].SetValue(_lightPosition);
+            effect.Parameters["xLightBrightness"].SetValue(_lightBrightness);
+            effect.Parameters["xLightDistance"].SetValue(_lightDistance);
+        }
+
+        public void Draw(GraphicsDevice device, Effect effect)
         {
             foreach (Voxel voxel in voxels)
             {
-                voxel.Draw(device, effect, lights);
+                voxel.Draw(device, effect);
             }
         }
     }

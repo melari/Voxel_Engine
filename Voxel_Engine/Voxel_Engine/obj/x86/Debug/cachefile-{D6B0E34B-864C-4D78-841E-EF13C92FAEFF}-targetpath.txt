@@ -3,3 +3,6 @@ Content\default.xnb
 Content\grass1.xnb
 Content\trunk.xnb
 Content\leaves.xnb
+Content\grass.xnb
+Content\cobblestone.xnb
+Content\torch.xnb

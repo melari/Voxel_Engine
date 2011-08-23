@@ -17,8 +17,8 @@ namespace Voxel_Engine
         public static bool WIREFRAME = false;
         public static bool LIGHTING = true;
 
-        public static int RES_WIDTH = 1600;
-        public static int RES_HEIGHT = 900;
+        public static int RES_WIDTH = 1920;
+        public static int RES_HEIGHT = 1080;
         public static bool FULLSCREEN = false;
 
         GraphicsDeviceManager graphics;
@@ -32,12 +32,10 @@ namespace Voxel_Engine
         Camera camera;
         InputHandle input = new InputHandle();
 
-        VoxelManager voxelManager;
-        BufferedList<Light> lights = new BufferedList<Light>();
+        VoxelManager voxelManager;        
         Editor editor;
-        
-        Vector3 lightDirection = new Vector3(-0.455f, -0.455f, -0.091f);        
-        float lightAmbientStrength = 0.5f;
+                
+        float lightAmbientStrength = 0.1f;
 
         public Engine()
         {
@@ -101,8 +99,8 @@ namespace Voxel_Engine
                 this.Exit();
 
             camera.Update(input);
-            if (editor != null) { editor.Update(input, lights); }
-            else if (input.getKey(Keys.OemTilde).released) { editor = new Editor(voxelManager, lights); }
+            if (editor != null) { editor.Update(input); }
+            else if (input.getKey(Keys.OemTilde).released) { editor = new Editor(voxelManager); }
             
             base.Update(gameTime);
         }
@@ -112,9 +110,10 @@ namespace Voxel_Engine
             camera.UpdateMatrices(effect);
             device.Clear(Color.Black);                                    
             device.BlendState = BlendState.NonPremultiplied;
+            voxelManager.SendLightsToShader(effect);
                         
-            voxelManager.Draw(device, effect, lights);
-            if (editor != null) { editor.Draw(device, effect, lights); }
+            voxelManager.Draw(device, effect);
+            if (editor != null) { editor.Draw(device, effect); }
 
 
             //2D Overlay

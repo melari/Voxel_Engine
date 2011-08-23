@@ -9,7 +9,7 @@ namespace Voxel_Engine
 {
     static class FpsCounter
     {
-        public static bool ENABLED = false;
+        public static bool ENABLED = true;
 
         static int fps = 0;
         static int count = 0;

@@ -9,3 +9,6 @@ C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\grass1.xnb
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\trunk.xnb
 C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\leaves.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\grass.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\cobblestone.xnb
+C:\Users\Caleb\Workspace\c#\Voxel_Engine\Voxel_Engine\Voxel_Engine\bin\x86\Debug\Content\torch.xnb

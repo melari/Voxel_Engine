@@ -13,7 +13,7 @@ namespace Voxel_Engine
         public float distance;
 
         public Light(Vector3 position, float distance)
-            : this(position, distance, 0.5f)
+            : this(position, distance, 0.75f)
         {            
         }
         public Light(Vector3 position, float distance, float brightness)
