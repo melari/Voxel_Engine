@@ -30,8 +30,8 @@ namespace Voxel_Engine
                     }
                 }
             }
-            for (int i = 0; i < 20; i++)
-                lights.Add(new Light(new Vector3(0, 33, 0), 30));
+            //for (int i = 0; i < 20; i++)
+            //    lights.Add(new Light(new Vector3(0, 33, 0), 30));
         }
 
         public void Add(Voxel voxel)
@@ -108,12 +108,16 @@ namespace Voxel_Engine
                 _lightPosition[i] = lights[i].position;
                 _lightBrightness[i] = lights[i].brightness;
                 _lightDistance[i] = lights[i].distance;
+
+                Matrix lightView = Matrix.CreateLookAt(lights[i].position, lights[i].position + Vector3.UnitX, Vector3.UnitY);
+                Matrix lightProjection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver2, 1f, 1f, 100f);
+                effect.Parameters["xLightWorldViewProjection"].SetValue(Matrix.Identity * lightView * lightProjection);
             }
 
             effect.Parameters["xLightCount"].SetValue(lights.Count);
             effect.Parameters["xLightPosition"].SetValue(_lightPosition);
             effect.Parameters["xLightBrightness"].SetValue(_lightBrightness);
-            effect.Parameters["xLightDistance"].SetValue(_lightDistance);
+            effect.Parameters["xLightDistance"].SetValue(_lightDistance);                       
         }
 
         public void Draw(GraphicsDevice device, Effect effect)

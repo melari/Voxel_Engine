@@ -76,11 +76,12 @@ namespace Voxel_Engine
             viewMatrix = Matrix.CreateLookAt(position, lookToPosition, Vector3.UnitY);
 
             //(ViewAngle, resolutionRatio, MinDrawDist, MaxDrawDist)//
-            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, ratio, 1.0f, 300.0f);
+            projectionMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, ratio, 1f, 200.0f);
 
             effect.Parameters["xView"].SetValue(viewMatrix);
             effect.Parameters["xProjection"].SetValue(projectionMatrix);
             effect.Parameters["xWorld"].SetValue(Matrix.Identity);
+            effect.Parameters["xWorldViewProjection"].SetValue(Matrix.Identity * viewMatrix * projectionMatrix);
         }
     }
 }
